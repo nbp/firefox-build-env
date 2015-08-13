@@ -44,12 +44,18 @@ let
         else null;
     });
 
-    buildWithCompiler = cc: builderWithStdenv (stdenvAdapters.overrideGCC stdenv cc);
+    buildWithCompiler = cc:
+      builderWithStdenv (
+        if stdenvAdapters ? overrideGCC then # Nixpkgs 14.12
+          stdenvAdapters.overrideGCC stdenv cc
+        else # Latest nixpkgs
+          stdenvAdapters.overrideCC stdenv cc
+      );
     chgCompilerSource = cc: name: src:
       cc.override (conf:
         if conf ? gcc then # Nixpkgs 14.12
           { gcc = lib.overrideDerivation conf.gcc (old: { inherit name src; }); }
-        else # Nixpkgs 15.05
+        else # Latest nixpkgs
           { cc = lib.overrideDerivation conf.cc (old: { inherit name src; }); }
       );
 
