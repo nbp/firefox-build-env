@@ -131,11 +131,11 @@ let
 
         configurePhase = ''
           export MOZBUILD_STATE_PATH=$(pwd)/.mozbuild
-          export MOZ_CONFIG=$(pwd)/.mozconfig
+          export MOZCONFIG=$(pwd)/.mozconfig
           export builddir=$(pwd)/build
 
           mkdir -p $MOZBUILD_STATE_PATH $builddir
-          echo > $MOZ_CONFIG "
+          echo > $MOZCONFIG "
           . $src/build/mozconfig.common
 
           ac_add_options --prefix=$out
