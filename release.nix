@@ -120,7 +120,12 @@ let
 
           dbus dbus_glib
 
-          alsaLib pulseaudio
+          alsaLib
+          (if pkgs ? pulseaudio then # Nixpkgs 14.12
+             pulseaudio
+           else # Latest nixpkgs
+             libpulseaudio
+          )
           gstreamer gst_plugins_base
         ] ++ lib.optionals lib.inNixShell [
           valgrind
