@@ -64,7 +64,9 @@ let
     clang33 = buildWithCompiler clang_33;
     clang34 = buildWithCompiler clang_34;
     clang35 = buildWithCompiler clang_35;
+    clang36 = buildWithCompiler clang_36;
     gcc = builderWithStdenv stdenv;
+    gcc5 = buildWithCompiler gcc5;
     gcc49 = buildWithCompiler gcc49;
     gcc48 = buildWithCompiler gcc48;
     gcc474 = buildWithCompiler (chgCompilerSource gcc473 "gcc-4.7.4" (fetchurl {
