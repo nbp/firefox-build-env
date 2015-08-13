@@ -116,7 +116,7 @@ let
           gnome.libgnome gnome.libgnomecanvas gnome.libgnomeui
           gnome.libIDL
 
-          gtkLibs.pango
+          gtkLibs.pango gtk3
 
           dbus dbus_glib
 
