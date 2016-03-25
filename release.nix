@@ -117,7 +117,7 @@ let
 
         buildInputs = [
           # Expected by "mach"
-          python which autoconf213
+          pythonFull which autoconf213
 
           # Expected by the configure script
           perl unzip zip gnumake yasm pkgconfig
@@ -143,6 +143,10 @@ let
              libpulseaudio
           )
           gstreamer gst_plugins_base
+
+          # For running mochitest, we are first trying to kill any started firefox by using "ps"
+          procps
+
         ] ++ lib.optionals lib.inNixShell [
           valgrind
         ];
