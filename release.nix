@@ -81,7 +81,13 @@ let
     }));
   };
 
-  
+
+  # inheritedEnv = pkgs.lib.optionalAttrs pkgs.lib.inNixShell (
+  #
+  #   (name: nameValuePair name (builtins.getEnv name))
+  #   [ "MOZBUILD_STATE_PATH" "MOZCONFIG" "PYTHONDONTWRITEBYTECODE" "NIX_STRIP_DEBUG" "NIX_GCC_WRAPPER_EXEC_HOOK" ]
+  # );
+
 
   jobs = rec {
 
@@ -98,7 +104,9 @@ let
     # and pull the the dependencies needed for building firefox with this
     # environment.
     #
-    #   $ nix-shell ./build/nix/release.nix -A build.i686-linux.gcc472 --pure --command 'gcc --version'
+    #   $ nix-shell ./build/nix/release.nix -A build.i686-linux.gcc472 --pure \
+    #       --command 'export AUTOCONF; mach build'
+    #
     #   $ nix-shell ./build/nix/release.nix -A build.x86_64-linux.clang --pure
     #
     build = forEachSystem (forEachCompiler (pkgs: with pkgs;
