@@ -44,12 +44,35 @@ let
         else null;
     });
 
+    clangWrapCC = llvmPackages:
+      let libcxx =
+        pkgs.lib.overrideDerivation llvmPackages.libcxx (drv: {
+          patches = drv.patches ++ [ ./putc-getc-stdio-visibility.patch ];
+        });
+      in
+      callPackage <nixpkgs/pkgs/build-support/cc-wrapper> {
+        cc = llvmPackages.clang-unwrapped or llvmPackages.clang;
+        isClang = true;
+        stdenv = clangStdenv;
+        libc = glibc;
+        # cc-wrapper pulls gcc headers, which are not compatible with features
+        # implemented in clang.  These packages are used to override that.
+        extraPackages = [ libcxx llvmPackages.libcxxabi ];
+        nativeTools = false;
+        nativeLibc = false;
+      };
+
     buildWithCompiler = cc:
       builderWithStdenv (
+        let cc' =
+          if cc ? clang then clangWrapCC cc
+          else cc;
+        in
+
         if stdenvAdapters ? overrideGCC then # Nixpkgs 14.12
-          stdenvAdapters.overrideGCC stdenv cc
+          stdenvAdapters.overrideGCC stdenv cc'
         else # Latest nixpkgs
-          stdenvAdapters.overrideCC stdenv cc
+          stdenvAdapters.overrideCC stdenv cc'
       );
     chgCompilerSource = cc: name: src:
       cc.override (conf:
@@ -60,11 +83,11 @@ let
       );
 
   in {
-    clang = builderWithStdenv clangStdenv;
-    clang33 = buildWithCompiler clang_33;
-    clang34 = buildWithCompiler clang_34;
-    clang35 = buildWithCompiler clang_35;
-    clang36 = buildWithCompiler clang_36;
+    clang = buildWithCompiler llvmPackages;
+    clang35 = buildWithCompiler clang_35; # Already unwrapped
+    clang36 = buildWithCompiler llvmPackages_36;
+    clang37 = buildWithCompiler llvmPackages_37;
+    clang38 = buildWithCompiler llvmPackages_38; # not working yet.
     gcc = builderWithStdenv stdenv;
     gcc5 = buildWithCompiler gcc5;
     gcc49 = buildWithCompiler gcc49;
